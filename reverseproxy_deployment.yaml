@@ -1,0 +1,61 @@
+# apiVersion: extensions/v1beta1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: reverseproxy
+  name: reverseproxy
+spec:
+  selector: 
+    matchLabels:
+      app: reverseproxy
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: reverseproxy      
+    spec:
+      containers:
+      - image: tsmvision/simple-reverse-proxy
+        name: reverseproxy
+        imagePullPolicy: Always          
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"       
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: reverseproxy
+#   labels:
+#     app: reverseproxy
+# spec:
+#   selector:
+#     matchLabels:
+#       app: nginx
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: nginx
+#     spec:
+#       containers:
+#         - name: nginx
+#           image: nginx:alpine
+#           ports:
+#           - containerPort: 80
+#           volumeMounts:
+#             - name: nginx-config
+#               mountPath: /etc/nginx/nginx.conf
+#               subPath: nginx.conf
+#       volumes:
+#         - name: nginx-config
+#           configMap:
+#             name: confnginx
